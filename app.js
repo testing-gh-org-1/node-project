@@ -4,6 +4,10 @@ const { exec } = require('child_process');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// ⚠️ Hardcoded credentials vulnerability - CodeQL should detect this
+const DB_PASSWORD = 'admin123';
+const API_KEY = 'sk-1234567890abcdef';
+
 // Middleware
 // making change 1 to trigger the code QA scan
 app.use(express.json());
@@ -58,10 +62,11 @@ app.get('/', (req, res) => {
   `);
 });
 
-app.get('/search', (req, res) => {
-  const searchTerm = req.query.q;
-  // ⚠️ Reflected XSS vulnerability - CodeQL should detect this
-  res.send(`<h1>Search Results for: ${searchTerm}</h1>`);
+app.get('/user', (req, res) => {
+  const userId = req.query.id;
+  // ⚠️ SQL Injection vulnerability - CodeQL should detect this
+  const query = `SELECT * FROM users WHERE id = ${userId}`;
+  res.send(`Query would execute: ${query}`);
 });
 
 app.get('/api/hello', (req, res) => {
