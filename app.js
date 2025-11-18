@@ -59,6 +59,17 @@ app.get('/', (req, res) => {
 });
 
 
+app.get('/calc', (req, res) => {
+  const expression = req.query.expr;
+  // ⚠️ Code Injection vulnerability - CodeQL should detect this
+  try {
+    const result = eval(expression);
+    res.send(`Result: ${result}`);
+  } catch (error) {
+    res.send('Error in expression');
+  }
+});
+
 app.get('/ping', (req, res) => {
   const host = req.query.host;
   // ⚠️ Command Injection vulnerability - CodeQL should detect this
