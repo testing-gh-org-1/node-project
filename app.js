@@ -1,4 +1,5 @@
 const express = require('express');
+const { exec } = require('child_process');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -58,12 +59,16 @@ app.get('/', (req, res) => {
 });
 
 
-app.get('/user', (req, res) => {
-  const userId = req.query.id;
-  // ⚠️ SQL Injection vulnerability - CodeQL should detect this
-  const query = `SELECT * FROM users WHERE id = ${userId}`;
-  
-  res.send(`Query would execute: ${query}`);
+app.get('/ping', (req, res) => {
+  const host = req.query.host;
+  // ⚠️ Command Injection vulnerability - CodeQL should detect this
+  exec(`ping ${host}`, (error, stdout, stderr) => {
+    if (error) {
+      res.send(`Error: ${error.message}`);
+      return;
+    }
+    res.send(`<pre>${stdout}</pre>`);
+  });
 });
 
 app.get('/api/hello', (req, res) => {
