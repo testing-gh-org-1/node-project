@@ -58,34 +58,12 @@ app.get('/', (req, res) => {
 });
 
 
-app.get('/calc', (req, res) => {
-  const expression = req.query.expr;
-  // ⚠️ Code Injection vulnerability
-  try {
-    const result = eval(expression);
-    res.send(`Result: ${result}`);
-  } catch (error) {
-    res.send('Error in expression');
-  }
-});
-
-
-
 app.get('/user', (req, res) => {
   const userId = req.query.id;
-  // ⚠️ SQL Injection vulnerability
+  // ⚠️ SQL Injection vulnerability - CodeQL should detect this
   const query = `SELECT * FROM users WHERE id = ${userId}`;
   
-  db.query(query, (error, results) => {
-    if (error) throw error;
-    res.json(results);
-  });
-});
-
-app.get('/search', (req, res) => {
-  const searchTerm = req.query.q;
-  // ⚠️ Reflected XSS vulnerability
-  res.send(`<h1>Search Results for: ${searchTerm}</h1>`);
+  res.send(`Query would execute: ${query}`);
 });
 
 app.get('/api/hello', (req, res) => {
