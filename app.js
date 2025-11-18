@@ -58,28 +58,10 @@ app.get('/', (req, res) => {
   `);
 });
 
-
-app.get('/calc', (req, res) => {
-  const expression = req.query.expr;
-  // ⚠️ Code Injection vulnerability - CodeQL should detect this
-  try {
-    const result = eval(expression);
-    res.send(`Result: ${result}`);
-  } catch (error) {
-    res.send('Error in expression');
-  }
-});
-
-app.get('/ping', (req, res) => {
-  const host = req.query.host;
-  // ⚠️ Command Injection vulnerability - CodeQL should detect this
-  exec(`ping ${host}`, (error, stdout, stderr) => {
-    if (error) {
-      res.send(`Error: ${error.message}`);
-      return;
-    }
-    res.send(`<pre>${stdout}</pre>`);
-  });
+app.get('/search', (req, res) => {
+  const searchTerm = req.query.q;
+  // ⚠️ Reflected XSS vulnerability - CodeQL should detect this
+  res.send(`<h1>Search Results for: ${searchTerm}</h1>`);
 });
 
 app.get('/api/hello', (req, res) => {
