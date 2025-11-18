@@ -4,10 +4,6 @@ const { exec } = require('child_process');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ⚠️ Hardcoded credentials vulnerability - CodeQL should detect this
-const DB_PASSWORD = 'admin123';
-const API_KEY = 'sk-1234567890abcdef';
-
 // Middleware
 // making change 1 to trigger the code QA scan
 app.use(express.json());
@@ -67,6 +63,15 @@ app.get('/user', (req, res) => {
   // ⚠️ SQL Injection vulnerability - CodeQL should detect this
   const query = `SELECT * FROM users WHERE id = ${userId}`;
   res.send(`Query would execute: ${query}`);
+});
+
+app.post('/update-config', (req, res) => {
+  const config = {};
+  // ⚠️ Prototype Pollution vulnerability - CodeQL should detect this
+  const key = req.body.key;
+  const value = req.body.value;
+  config[key] = value;
+  res.json({ message: 'Config updated', config });
 });
 
 app.get('/api/hello', (req, res) => {
